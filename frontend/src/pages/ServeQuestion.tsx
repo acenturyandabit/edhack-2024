@@ -26,20 +26,23 @@ type QuestionAndResponse = {
   aiResponse: string | undefined;
 };
 
-type Mode = "Presenting Question" | "Waiting for AI Answer" | "Fetching question" | "Student reading answer";
+type Mode =
+  | "Presenting Question"
+  | "Waiting for AI Answer"
+  | "Fetching question"
+  | "Student reading answer";
 
-type State = {
+export type State = {
   questionHistory: Array<QuestionAndResponse>;
   answer: string;
   currentState: Mode;
 };
 
-const ServeQuestionPage = () => {
-  const [state, setState] = useState<State>({
-    questionHistory: [],
-    answer: "",
-    currentState: "Presenting Question",
-  });
+const ServeQuestionPage = (props: {
+  state: State;
+  setState: React.Dispatch<React.SetStateAction<State>>;
+}) => {
+  const { state, setState } = props;
 
   React.useEffect(() => {
     setState((prevState) => {
@@ -77,18 +80,17 @@ const ServeQuestionPage = () => {
       return {
         ...prevState,
         questionHistory: [...prevState.questionHistory],
-        currentState: "Waiting for AI Answer"
+        currentState: "Waiting for AI Answer",
       };
     });
   };
-
 
   const handleNext = () => {
     setState((prevState) => {
       return {
         ...prevState,
         questionHistory: [...prevState.questionHistory],
-        currentState: "Fetching question"
+        currentState: "Fetching question",
       };
     });
 
@@ -96,12 +98,15 @@ const ServeQuestionPage = () => {
       setState((prevState) => {
         return {
           ...prevState,
-          questionHistory: [...prevState.questionHistory, {
-            question: testStr + "third one",
-            response: undefined,
-            aiResponse: undefined,
-          }],
-          currentState: "Presenting Question"
+          questionHistory: [
+            ...prevState.questionHistory,
+            {
+              question: testStr + "third one",
+              response: undefined,
+              aiResponse: undefined,
+            },
+          ],
+          currentState: "Presenting Question",
         };
       });
     }, 1000);
@@ -124,7 +129,7 @@ const ServeQuestionPage = () => {
         ...prevState,
         // force child rerender
         questionHistory: [...prevState.questionHistory],
-        currentState: "Student reading answer"
+        currentState: "Student reading answer",
       };
     });
   };
@@ -185,17 +190,18 @@ const ServeQuestionPage = () => {
   );
 };
 
-
 // performance optimisation
-const QuestionHistory = (props: { questionHistory:  Array<QuestionAndResponse> }) => {
-  const {questionHistory} = props;
+const QuestionHistory = (props: {
+  questionHistory: Array<QuestionAndResponse>;
+}) => {
+  const { questionHistory } = props;
   return (
     <MathJaxContext version={3} config={config}>
       <MathJax dynamic hideUntilTypeset="every">
         {questionHistory.map((item, index) => (
           <div key={index}>
             <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
-              Question {index+1}
+              Question {index + 1}
             </Typography>
             <Typography variant="h5" sx={{ mb: 2 }}>
               <MathJax>{item.question}</MathJax>
