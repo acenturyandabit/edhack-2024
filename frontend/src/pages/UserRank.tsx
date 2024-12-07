@@ -1,8 +1,10 @@
 import * as React from "react";
 import Markdown from "react-markdown";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
+import { State } from "./ServeQuestion";
 
-export const UserRank = () => {
+export const UserRank = (props: {state: State}) => {
+  const {state} = props;
   const [renderedText, setRenderedText] = React.useState({
     strengthsText: "",
     questionsSolvedText: [],
@@ -50,6 +52,15 @@ export const UserRank = () => {
             <Markdown>{renderedText.areasForImprovementText}</Markdown>
           </details>
         </MathJax>
+
+          {state.questionHistory.map((item, index) => (
+            <div key={index}>
+              <MathJax>{item.question}</MathJax>
+              <MathJax>{item.response}</MathJax>
+              <MathJax>{item.aiResponse}</MathJax>
+            </div>
+          ))}
+
       </MathJaxContext>
     </div>
   );
