@@ -8,7 +8,7 @@ const port = 3000;
 
 const db = getDb();
 
-const FORMAT_INSTRUCTIONS = "You may use MathJax in your response. Surround inline math expressions with single $ and block maths with $$." 
+const FORMAT_INSTRUCTIONS = "You may use MathJax in your response. Surround inline math expressions with single $ and block maths with $$."
 
 // Middleware to parse JSON body content
 app.use(cors());
@@ -37,6 +37,13 @@ app.get('/api/userRank', async (req, res) => {
     questionsIncorrectText: questionsIncorrectText,
     areasForImprovementText,
   });
+});
+
+app.post('/api/userResponse', async (req, res) => {
+  const question = req.body.question;
+  const userResponse = req.body.response;
+  const response = await sendLLM(`Student: ${userResponse}. Question: ${question}. Determine whether the stduent's response is correct or incorrect. If the student's response is incorrect, provide a reason for the incorrectness. If the student's response is correct, provide a reason for the correctness. Present your answer in language suitable for a high school student. ${FORMAT_INSTRUCTIONS}`);
+  res.send({ response: response });
 });
 
 app.listen(port, () => {
