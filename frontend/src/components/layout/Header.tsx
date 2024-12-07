@@ -39,7 +39,7 @@ const Header = () => {
       <AppBar position="static" sx={{ height: "65px" }}>
         <Toolbar>
           <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: "bold" }}>
-            Landing
+            Calcito
           </Typography>
 
           <AuthButtons />

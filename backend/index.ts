@@ -8,6 +8,8 @@ const port = 3000;
 
 const db = getDb();
 
+const FORMAT_INSTRUCTIONS = "You may use MathJax in your response. Surround inline math expressions with single $ and block maths with $$." 
+
 // Middleware to parse JSON body content
 app.use(cors());
 app.use(express.json());
@@ -25,8 +27,8 @@ app.get('/api/userRank', async (req, res) => {
     "What is the volume of a cylinder with radius 10cm and slant height 20cm?",
     "What is the surface area of a hemisphere sphere with radius 5cm?"
   ];
-  const strengthsText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are his strengths? You may use MathJax in your response.`);
-  const areasForImprovementText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are the areas for improvement? You may use MathJax in your response.`);
+  const strengthsText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are his strengths? ${FORMAT_INSTRUCTIONS}`);
+  const areasForImprovementText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are the areas for improvement? ${FORMAT_INSTRUCTIONS}`);
   console.log(strengthsText);
   console.log(areasForImprovementText);
   res.send({
