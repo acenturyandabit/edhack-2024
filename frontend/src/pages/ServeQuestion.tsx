@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as React from "react";
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { Box, Typography, TextField, Button, Input } from "@mui/material";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 const testStr = `What is the area of a sector with radius 30cm and angle 60°?`;
@@ -45,16 +45,18 @@ const ServeQuestionPage = (props: {
   const { state, setState } = props;
 
   React.useEffect(() => {
-    setState((prevState) => {
-      prevState.questionHistory.push({
-        question: testStr,
-        response: undefined,
-        aiResponse: undefined,
+    if (state.questionHistory.length == 0) {
+      setState((prevState) => {
+        prevState.questionHistory.push({
+          question: testStr,
+          response: undefined,
+          aiResponse: undefined,
+        });
+        return {
+          ...prevState,
+        };
       });
-      return {
-        ...prevState,
-      };
-    });
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,10 +66,10 @@ const ServeQuestionPage = (props: {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (answer: string) => {
     setState((prevState) => {
       prevState.questionHistory[prevState.questionHistory.length - 1].response =
-        prevState.answer;
+        answer;
       prevState.answer = "";
       fetchAIAnswer(
         prevState.questionHistory[prevState.questionHistory.length - 1]
@@ -79,33 +81,6 @@ const ServeQuestionPage = (props: {
       };
     });
   };
-
-  // const handleNext = () => {
-  //   setState((prevState) => {
-  //     return {
-  //       ...prevState,
-  //       questionHistory: [...prevState.questionHistory],
-  //       currentState: "Fetching question",
-  //     };
-  //   });
-
-  //   setTimeout(() => {
-  //     setState((prevState) => {
-  //       return {
-  //         ...prevState,
-  //         questionHistory: [
-  //           ...prevState.questionHistory,
-  //           {
-  //             question: testStr + "third one",
-  //             response: undefined,
-  //             aiResponse: undefined,
-  //           },
-  //         ],
-  //         currentState: "Presenting Question",
-  //       };
-  //     });
-  //   }, 1000);
-  // };
 
   const handleNext = async () => {
     const currQuestion =
@@ -178,19 +153,7 @@ const ServeQuestionPage = (props: {
       <QuestionHistory questionHistory={state.questionHistory} />
       {state.currentState == "Presenting Question" && (
         <div>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            Input your answer here
-          </Typography>
-          <TextField
-            placeholder="Answer"
-            variant="outlined"
-            value={state.answer}
-            onChange={handleInputChange}
-            sx={{ mb: 2, width: "100%" }}
-          />
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
+          <InputBox submitAnswer={handleSubmit} />
         </div>
       )}
       {state.currentState == "Waiting for AI Answer" && (
@@ -217,7 +180,53 @@ const ServeQuestionPage = (props: {
           </Typography>
         </div>
       )}
+      <details>
+        <summary>In case of emergency</summary>
+        <button
+          onClick={() =>
+            setState((prevState) => ({
+              ...prevState,
+              currentState: "Presenting Question",
+            }))
+          }
+        >
+          Reset
+        </button>
+      </details>
     </Box>
+  );
+};
+
+// performance optimisation 2: keep local answer local, only submit on button press, to save rerenders
+const InputBox = (props: { submitAnswer: (answer: string) => void }) => {
+  const { submitAnswer } = props;
+  const [answer, setAnswer] = React.useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAnswer(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    setAnswer("");
+    submitAnswer(answer);
+  };
+
+  return (
+    <div>
+      <Typography variant="body1" sx={{ mb: 1 }}>
+        Input your answer here
+      </Typography>
+      <TextField
+        placeholder="Answer"
+        variant="outlined"
+        value={answer}
+        onChange={handleInputChange}
+        sx={{ mb: 2, width: "100%" }}
+      />
+      <Button variant="contained" color="primary" onClick={handleSubmit}>
+        Submit
+      </Button>
+    </div>
   );
 };
 
