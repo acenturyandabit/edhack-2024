@@ -1,15 +1,13 @@
 import * as React from "react";
 
-
-function ServeQuestion() {
+function Landing() {
   return (
       <div>
         <p>
-          serve question
+          Welcome to the Landing Page
         </p>
       </div>
   );
 }
 
-export default ServeQuestion;
-
+export default Landing;
