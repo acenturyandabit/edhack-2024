@@ -45,16 +45,18 @@ const ServeQuestionPage = (props: {
   const { state, setState } = props;
 
   React.useEffect(() => {
-    setState((prevState) => {
-      prevState.questionHistory.push({
-        question: testStr,
-        response: undefined,
-        aiResponse: undefined,
+    if (state.questionHistory.length == 0) {
+      setState((prevState) => {
+        prevState.questionHistory.push({
+          question: testStr,
+          response: undefined,
+          aiResponse: undefined,
+        });
+        return {
+          ...prevState,
+        };
       });
-      return {
-        ...prevState,
-      };
-    });
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
