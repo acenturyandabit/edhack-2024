@@ -47,12 +47,7 @@ const ServeQuestionPage = (props: {
   React.useEffect(() => {
     setState((prevState) => {
       prevState.questionHistory.push({
-        question: testStr + "first one",
-        response: "something i said",
-        aiResponse: "something the ai said",
-      });
-      prevState.questionHistory.push({
-        question: testStr + "second one",
+        question: testStr,
         response: undefined,
         aiResponse: undefined,
       });
@@ -85,31 +80,67 @@ const ServeQuestionPage = (props: {
     });
   };
 
-  const handleNext = () => {
+  // const handleNext = () => {
+  //   setState((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       questionHistory: [...prevState.questionHistory],
+  //       currentState: "Fetching question",
+  //     };
+  //   });
+
+  //   setTimeout(() => {
+  //     setState((prevState) => {
+  //       return {
+  //         ...prevState,
+  //         questionHistory: [
+  //           ...prevState.questionHistory,
+  //           {
+  //             question: testStr + "third one",
+  //             response: undefined,
+  //             aiResponse: undefined,
+  //           },
+  //         ],
+  //         currentState: "Presenting Question",
+  //       };
+  //     });
+  //   }, 1000);
+  // };
+
+  const handleNext = async () => {
+    const currQuestion =
+      state.questionHistory[state.questionHistory.length - 1];
+    const feedback = "This question is too easy.";
+
+    const response = await fetch("/api/serveQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: currQuestion,
+        feedback: feedback,
+      }),
+    });
+
+    const data = await response.json();
+    const newQuestion = data.generatedQuestion;
+    console.log(newQuestion);
+
     setState((prevState) => {
       return {
         ...prevState,
-        questionHistory: [...prevState.questionHistory],
-        currentState: "Fetching question",
+        questionHistory: [
+          ...prevState.questionHistory,
+          {
+            question: newQuestion,
+            response: undefined,
+            aiResponse: undefined,
+          },
+        ],
+        currentState: "Presenting Question",
       };
     });
-
-    setTimeout(() => {
-      setState((prevState) => {
-        return {
-          ...prevState,
-          questionHistory: [
-            ...prevState.questionHistory,
-            {
-              question: testStr + "third one",
-              response: undefined,
-              aiResponse: undefined,
-            },
-          ],
-          currentState: "Presenting Question",
-        };
-      });
-    }, 1000);
   };
 
   const fetchAIAnswer = async (questionAndResponse: QuestionAndResponse) => {

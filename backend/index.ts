@@ -49,9 +49,10 @@ app.get("/api/userRank", async (req, res) => {
 app.post("/api/userResponse", async (req, res) => {
   const question = req.body.question;
   const userResponse = req.body.response;
-  const prompt = ` Question: ${question}.\n===========\nStudent: ${userResponse}.\n===========\n`+
-  `Determine whether the student's response is correct or incorrect. If the student's response is incorrect, provide a reason for the incorrectness. If the student's response is correct, provide a reason for the correctness. Present your answer in language suitable for a high school student. ${FORMAT_INSTRUCTIONS}. Remember, start your explanation with a clear response of whether the student is correct or incorrect.`
-  console.log(prompt)
+  const prompt =
+    ` Question: ${question}.\n===========\nStudent: ${userResponse}.\n===========\n` +
+    `Determine whether the student's response is correct or incorrect. If the student's response is incorrect, provide a reason for the incorrectness. If the student's response is correct, provide a reason for the correctness. Present your answer in language suitable for a high school student. ${FORMAT_INSTRUCTIONS}. Remember, start your explanation with a clear response of whether the student is correct or incorrect.`;
+  console.log(prompt);
   const response = await sendLLM(prompt);
   res.send({ response: response });
 });
@@ -60,17 +61,20 @@ app.post("/api/serveQuestion", async (req, res) => {
   try {
     const { question: currQuestion, feedback } = req.body;
 
+    console.log(currQuestion);
+    console.log(feedback);
+
     let prompt;
 
     if (!feedback || feedback.trim() === "") {
       prompt = `
-        Based on the question: "${currQuestion}",
+        Based on the question: "${currQuestion.question}",
         generate a new question with the same difficulty level to continue practicing the topic.
         Remove all wrapper and give the question as single string only.
       `;
     } else {
       prompt = `
-        Based on the question: "${currQuestion}" and the feedback: "${feedback}",
+        Based on the question: "${currQuestion.question}" and the feedback: "${feedback}",
         generate a new question that either:
         1. Reinforces the current topic at the same level if feedback indicates difficulty.
         2. Introduces a slightly harder challenge if feedback indicates mastery.
