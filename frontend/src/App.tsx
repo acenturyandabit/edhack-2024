@@ -3,6 +3,7 @@ import * as React from "react";
 import Landing from "./pages/Landing";
 import ServeQuestion, { State } from "./pages/ServeQuestion";
 import { UserRank } from "~pages/UserRank";
+import ImageToQuestion from "~pages/ImageToQuestion";
 
 function App() {
   const [state, setState] = React.useState<State>({
@@ -13,8 +14,12 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/serveQuestion" element={<ServeQuestion state={state} setState={setState} />} />
+      <Route
+        path="/serveQuestion"
+        element={<ServeQuestion state={state} setState={setState} />}
+      />
       <Route path="/userRank" element={<UserRank />} />
+      <Route path="/imageToQuestion" element={<ImageToQuestion />} />
     </Routes>
   );
 }
