@@ -17,33 +17,37 @@ export const UserRank = () => {
     };
     fetchData();
   }, []);
-
   return (
     <div>
       <MathJaxContext>
         <MathJax dynamic hideUntilTypeset="every">
           <h1>Timmy's Math Results</h1>
-          <div>
-            <h2>Questions that Timmy Solved</h2>
+          <details>
+            <summary style={{ fontSize: "1.3em" }}>
+              Questions that Timmy Solved
+            </summary>
             {renderedText.questionsSolvedText.map((question, index) => (
               <p key={index}>{question}</p>
             ))}
-          </div>
-          <div>
-            <h2>Questions that Timmy got incorrect</h2>
+          </details>
+          <details>
+            <summary style={{ fontSize: "1.3em" }}>
+              Questions that Timmy got incorrect
+            </summary>
             {renderedText.questionsIncorrectText.map((question, index) => (
               <p key={index}>{question}</p>
             ))}
-          </div>
-          <div>
-            <h2>Timmy's Strengths</h2>
+          </details>
+          <details>
+            <summary style={{ fontSize: "1.3em" }}>Timmy's Strengths</summary>
             <Markdown>{renderedText.strengthsText}</Markdown>
-          </div>
-          <div>
-            <h2>Timmy's Areas for improvement</h2>
-
+          </details>
+          <details>
+            <summary style={{ fontSize: "1.3em" }}>
+              Timmy's Areas for improvement
+            </summary>
             <Markdown>{renderedText.areasForImprovementText}</Markdown>
-          </div>
+          </details>
         </MathJax>
       </MathJaxContext>
     </div>
