@@ -26,14 +26,16 @@ type QuestionAndResponse = {
   aiResponse: string | undefined;
 };
 
-type Mode = "Presenting Question" | "Waiting for AI Answer";
+type Mode = "Presenting Question" | "Waiting for AI Answer" | "Fetching question" | "Student reading answer";
+
+type State = {
+  questionHistory: Array<QuestionAndResponse>;
+  answer: string;
+  currentState: Mode;
+};
 
 const ServeQuestionPage = () => {
-  const [state, setState] = useState<{
-    questionHistory: Array<QuestionAndResponse>;
-    answer: string;
-    currentState: Mode;
-  }>({
+  const [state, setState] = useState<State>({
     questionHistory: [],
     answer: "",
     currentState: "Presenting Question",
@@ -42,7 +44,12 @@ const ServeQuestionPage = () => {
   React.useEffect(() => {
     setState((prevState) => {
       prevState.questionHistory.push({
-        question: testStr,
+        question: testStr + "first one",
+        response: "something i said",
+        aiResponse: "something the ai said",
+      });
+      prevState.questionHistory.push({
+        question: testStr + "second one",
         response: undefined,
         aiResponse: undefined,
       });
@@ -69,9 +76,35 @@ const ServeQuestionPage = () => {
       );
       return {
         ...prevState,
-        currentState: "Waiting for AI Answer",
+        questionHistory: [...prevState.questionHistory],
+        currentState: "Waiting for AI Answer"
       };
     });
+  };
+
+
+  const handleNext = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        questionHistory: [...prevState.questionHistory],
+        currentState: "Fetching question"
+      };
+    });
+
+    setTimeout(() => {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          questionHistory: [...prevState.questionHistory, {
+            question: testStr + "third one",
+            response: undefined,
+            aiResponse: undefined,
+          }],
+          currentState: "Presenting Question"
+        };
+      });
+    }, 1000);
   };
 
   const fetchAIAnswer = async (questionAndResponse: QuestionAndResponse) => {
@@ -89,6 +122,9 @@ const ServeQuestionPage = () => {
       ].aiResponse = data.response;
       return {
         ...prevState,
+        // force child rerender
+        questionHistory: [...prevState.questionHistory],
+        currentState: "Student reading answer"
       };
     });
   };
@@ -103,35 +139,91 @@ const ServeQuestionPage = () => {
         height: "100vh",
       }}
     >
-      <MathJaxContext version={3} config={config}>
-        <MathJax dynamic hideUntilTypeset="every">
-          {state.questionHistory.map((item, index) => (
-            <div>
-              <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
-                Question
-              </Typography>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                <MathJax>{testStr}</MathJax>
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                Input your answer here
-              </Typography>
-              <TextField
-                placeholder="Answer"
-                variant="outlined"
-                value={state.answer}
-                onChange={handleInputChange}
-                sx={{ mb: 2, width: "100%" }}
-              />
-            </div>
-          ))}
-        </MathJax>
-      </MathJaxContext>
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
-      <Button>Next</Button>
+      <QuestionHistory questionHistory={state.questionHistory} />
+      {state.currentState == "Presenting Question" && (
+        <div>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Input your answer here
+          </Typography>
+          <TextField
+            placeholder="Answer"
+            variant="outlined"
+            value={state.answer}
+            onChange={handleInputChange}
+            sx={{ mb: 2, width: "100%" }}
+          />
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </div>
+      )}
+      {state.currentState == "Waiting for AI Answer" && (
+        <div>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Groq is reading your response...
+          </Typography>
+        </div>
+      )}
+      {state.currentState == "Student reading answer" && (
+        <div>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            When you're ready, press Next.
+          </Typography>
+          <Button variant="contained" color="primary" onClick={handleNext}>
+            Next
+          </Button>
+        </div>
+      )}
+      {state.currentState == "Fetching question" && (
+        <div>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Groq is making a new question...
+          </Typography>
+        </div>
+      )}
     </Box>
+  );
+};
+
+
+// performance optimisation
+const QuestionHistory = (props: { questionHistory:  Array<QuestionAndResponse> }) => {
+  const {questionHistory} = props;
+  return (
+    <MathJaxContext version={3} config={config}>
+      <MathJax dynamic hideUntilTypeset="every">
+        {questionHistory.map((item, index) => (
+          <div key={index}>
+            <Typography variant="h4" sx={{ mb: 2, fontWeight: "bold" }}>
+              Question {index+1}
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              <MathJax>{item.question}</MathJax>
+            </Typography>
+            {item.response && (
+              <>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Student's Response
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  {item.response}
+                </Typography>
+              </>
+            )}
+            {item.aiResponse && (
+              <>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Groq Says:
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  {item.aiResponse}
+                </Typography>
+              </>
+            )}
+          </div>
+        ))}
+      </MathJax>
+    </MathJaxContext>
   );
 };
 

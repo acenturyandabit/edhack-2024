@@ -48,7 +48,10 @@ app.get("/api/userRank", async (req, res) => {
 app.post('/api/userResponse', async (req, res) => {
   const question = req.body.question;
   const userResponse = req.body.response;
-  const response = await sendLLM(`Student: ${userResponse}. Question: ${question}. Determine whether the stduent's response is correct or incorrect. If the student's response is incorrect, provide a reason for the incorrectness. If the student's response is correct, provide a reason for the correctness. Present your answer in language suitable for a high school student. ${FORMAT_INSTRUCTIONS}`);
+  const prompt = ` Question: ${question}.\n===========\nStudent: ${userResponse}.\n===========\n`+
+  `Determine whether the student's response is correct or incorrect. If the student's response is incorrect, provide a reason for the incorrectness. If the student's response is correct, provide a reason for the correctness. Present your answer in language suitable for a high school student. ${FORMAT_INSTRUCTIONS}. Remember, start your explanation with a clear response of whether the student is correct or incorrect.`
+  console.log(prompt)
+  const response = await sendLLM(prompt);
   res.send({ response: response });
 });
 
