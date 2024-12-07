@@ -21,10 +21,19 @@ app.get('/api/userRank', async (req, res) => {
     "What is the volume of a cylinder with radius 10cm and height 20cm?",
     "What is the surface area of a sphere with radius 5cm?"
   ];
+  const questionsIncorrectText = ["What is the area of a sector with radius 30cm and angle 220°?",
+    "What is the volume of a cylinder with radius 10cm and slant height 20cm?",
+    "What is the surface area of a hemisphere sphere with radius 5cm?"
+  ];
+  const strengthsText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are his strengths? You may use MathJax in your response.`);
+  const areasForImprovementText = await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are the areas for improvement? You may use MathJax in your response.`);
+  console.log(strengthsText);
+  console.log(areasForImprovementText);
   res.send({
-    strengthsText: await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are his strengths?`),
+    strengthsText,
     questionsSolvedText: questionsSolvedText,
-    areasForImprovementText: await sendLLM(`Timmy has solved the following questions: ${questionsSolvedText.join(', ')}. What are the areas for improvement?`),
+    questionsIncorrectText: questionsIncorrectText,
+    areasForImprovementText,
   });
 });
 
