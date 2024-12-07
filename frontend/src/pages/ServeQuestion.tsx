@@ -2,23 +2,9 @@ import { useState } from "react";
 import * as React from "react";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
+import { config } from "../mathJaxConfig";
 
 const testStr = `What is the area of a sector with radius 30cm and angle 60°?`;
-
-const config = {
-  loader: { load: ["[tex]/html"] },
-  tex: {
-    packages: { "[+]": ["html"] },
-    inlineMath: [
-      ["$", "$"],
-      ["\\(", "\\)"],
-    ],
-    displayMath: [
-      ["$$", "$$"],
-      ["\\[", "\\]"],
-    ],
-  },
-};
 
 type QuestionAndResponse = {
   question: string;

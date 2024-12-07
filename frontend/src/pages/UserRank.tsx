@@ -2,6 +2,8 @@ import * as React from "react";
 import Markdown from "react-markdown";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { State } from "./ServeQuestion";
+import { config} from "../mathJaxConfig";
+
 
 export const UserRank = (props: {state: State}) => {
   const {state} = props;
@@ -22,7 +24,7 @@ export const UserRank = (props: {state: State}) => {
 
   return (
     <div>
-      <MathJaxContext>
+      <MathJaxContext version={3} config={config}>
         <MathJax dynamic hideUntilTypeset="every">
           <h1>Timmy's Math Results</h1>
           <details>
@@ -30,14 +32,6 @@ export const UserRank = (props: {state: State}) => {
               Questions that Timmy Solved
             </summary>
             {renderedText.questionsSolvedText.map((question, index) => (
-              <p key={index}>{question}</p>
-            ))}
-          </details>
-          <details>
-            <summary style={{ fontSize: "1.3em" }}>
-              Questions that Timmy got incorrect
-            </summary>
-            {renderedText.questionsIncorrectText.map((question, index) => (
               <p key={index}>{question}</p>
             ))}
           </details>
