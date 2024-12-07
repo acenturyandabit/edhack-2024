@@ -46,6 +46,31 @@ app.get("/api/userRank", async (req, res) => {
   });
 });
 
+app.post("/api/userBank", async (req, res) => {
+  const questionsSolvedText = req.body.data;
+  const strengthsText = await sendLLM(
+    `Timmy has solved the following questions correctly:
+    ========
+    ${questionsSolvedText}
+    ========
+    . What are his strengths? You may use MathJax in your response.`
+  );
+  const areasForImprovementText = await sendLLM(
+    `Timmy has solved the following questions correctly: 
+     ========
+    ${questionsSolvedText}
+    ========
+    . What are the areas for improvement? You may use MathJax in your response.`
+  );
+  console.log(strengthsText)
+  console.log(areasForImprovementText)
+  res.send({
+    strengthsText,
+    questionsSolvedText: questionsSolvedText,
+    areasForImprovementText,
+  });
+})
+
 app.post("/api/userResponse", async (req, res) => {
   const question = req.body.question;
   const userResponse = req.body.response;

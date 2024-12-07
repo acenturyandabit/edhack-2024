@@ -19,6 +19,30 @@ export const UserRank = (props: { state: State }) => {
     };
     fetchData();
   };
+
+  React.useEffect(() => {
+    fetchAIAnswer(renderedText.questionsSolvedText);
+  }, [renderedText.questionsSolvedText]);
+
+  const fetchAIAnswer = async (questionsSolvedText: string[]) => {
+    console.log(JSON.stringify(questionsSolvedText.join(", ")));
+    const response = await fetch("/api/userBank", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ data: questionsSolvedText.join(", ") }),
+    });
+    const data = await response.json();
+    setRenderedText((prevstate) => {
+      return {
+        ...prevstate,
+        strengthsText: data.strengthsText,
+        areasForImprovementText: data.areasForImprovementText,
+      };
+    });
+  };
+
   React.useEffect(() => {
     setRenderedText({
       strengthsText: "",
