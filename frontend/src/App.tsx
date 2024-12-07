@@ -5,16 +5,17 @@ import ServeQuestion, { State } from "./pages/ServeQuestion";
 import { UserRank } from "~pages/UserRank";
 
 function App() {
-  const [state, setState] = React.useState<State>({
-    questionHistory: [],
-    answer: "",
-    currentState: "Presenting Question",
-  });
+  const [state, setState] = React.useState<State>(JSON.parse(localStorage.getItem("state") || `{"questionHistory": [], "answer": "", "currentState": "Presenting Question"}`));
+  console.log(state);
+  React.useEffect(() => {
+    // store the question history in local storage
+    localStorage.setItem("state", JSON.stringify(state));
+  }, [state.questionHistory]);
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/serveQuestion" element={<ServeQuestion state={state} setState={setState} />} />
-      <Route path="/userRank" element={<UserRank />} />
+      <Route path="/userRank" element={<UserRank state={state}/>} />
     </Routes>
   );
 }
