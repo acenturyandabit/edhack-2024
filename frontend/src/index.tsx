@@ -1,11 +1,13 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-
+import { UserRank } from "./pages/UserRank";
+import { ServeQuestion } from "~pages/ServeQuestion";
 const App = () => {
   return (
-    <div>
-      <h1>Hello team</h1>
-    </div>
+    <>
+      <UserRank />
+      <ServeQuestion />
+    </>
   );
 };
 

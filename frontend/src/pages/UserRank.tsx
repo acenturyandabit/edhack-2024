@@ -1,7 +1,9 @@
+import * as React from "react";
+
 export const UserRank = () => { 
   return (
     <div>
-      <h1>Hello team</h1>
+      <h1>This is the user rank page</h1>
     </div>
   );
 };
