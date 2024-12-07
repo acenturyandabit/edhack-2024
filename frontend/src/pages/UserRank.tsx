@@ -17,6 +17,7 @@ export const UserRank = () => {
     };
     fetchData();
   }, []);
+
   return (
     <div>
       <MathJaxContext>

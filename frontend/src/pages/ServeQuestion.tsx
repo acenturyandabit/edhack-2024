@@ -37,10 +37,10 @@ const ServeQuestionPage = () => {
     questionHistory: [],
     answer: "",
     currentState: "Presenting Question",
-  })
+  });
 
   React.useEffect(() => {
-    setState(prevState => {
+    setState((prevState) => {
       prevState.questionHistory.push({
         question: testStr,
         response: undefined,
@@ -48,30 +48,32 @@ const ServeQuestionPage = () => {
       });
       return {
         ...prevState,
-      }
-    })
-  },
-  []);
+      };
+    });
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState(prevState => ({
+    setState((prevState) => ({
       ...prevState,
       answer: e.target.value,
     }));
   };
 
   const handleSubmit = async () => {
-    setState(prevState => {
-      prevState.questionHistory[prevState.questionHistory.length - 1].response = prevState.answer;
+    setState((prevState) => {
+      prevState.questionHistory[prevState.questionHistory.length - 1].response =
+        prevState.answer;
       prevState.answer = "";
-      fetchAIAnswer(prevState.questionHistory[prevState.questionHistory.length - 1]);
+      fetchAIAnswer(
+        prevState.questionHistory[prevState.questionHistory.length - 1]
+      );
       return {
         ...prevState,
         currentState: "Waiting for AI Answer",
-      }
+      };
     });
   };
-  
+
   const fetchAIAnswer = async (questionAndResponse: QuestionAndResponse) => {
     const response = await fetch("/api/userResponse", {
       method: "POST",
@@ -81,14 +83,15 @@ const ServeQuestionPage = () => {
       body: JSON.stringify(questionAndResponse),
     });
     const data = await response.json();
-    setState(prevState => {
-      prevState.questionHistory[prevState.questionHistory.length - 1].aiResponse = data.response;
+    setState((prevState) => {
+      prevState.questionHistory[
+        prevState.questionHistory.length - 1
+      ].aiResponse = data.response;
       return {
         ...prevState,
-      }
-    })
-  }
-
+      };
+    });
+  };
 
   return (
     <Box
@@ -127,6 +130,7 @@ const ServeQuestionPage = () => {
       <Button variant="contained" color="primary" onClick={handleSubmit}>
         Submit
       </Button>
+      <Button>Next</Button>
     </Box>
   );
 };
